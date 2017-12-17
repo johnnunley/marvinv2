@@ -19,5 +19,35 @@ along with MarvinV2.  If not, see <http://www.gnu.org/licenses/>.
 
 require('dotenv').config();
 
-const Snoowrap = require('snoowrap');
-const Snoostorm = require('snoostorm');
+var Snoowrap = require('snoowrap');
+var Snoostorm = require('snoostorm');
+var Respond = require('./respond');
+
+var r = new Snoowrap({
+    userAgent: 'reddit-bot-marvin-v2',
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    username: process.env.REDDIT_USER,
+    password: process.env.REDDIT_PASS
+});
+var client = new Snoostorm(r);
+
+var streamOpts = {
+    subreddit: 'scp',
+    results: 25
+};
+
+var comments = client.CommentStream(streamOpts);
+
+comments.on('comment', (comment) => {
+  Respond.respond(comment);
+});
+
+var submissionStream = client.SubmissionStream({
+  "subreddit": "scp",
+  "results": 5            
+})
+
+submissionStream.on("submission", function(post) {
+  Respond.respond(post);
+});
