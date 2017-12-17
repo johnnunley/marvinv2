@@ -17,8 +17,10 @@ along with MarvinV2.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-var wikidot = require('wikidot');
-wikidot.site = 'scp-wiki.wikidot.com';
+//var wikidot = require('wikidot');
+//wikidot.site = 'scp-wiki.wikidot.com';
+var https = require('https');
+https.globalAgent.maxSockets = 100;
 
 module.exports = {
   respond : function(comment) {
@@ -31,30 +33,37 @@ module.exports = {
       results.push(m[0]);
     }
 
-    console.log(results);
-
     if (results.length === 0) return 'No Reply';
     
     var reply = '';
 
     var i;
+    var count = 0;  
     for (i = 0; i < results.length; i++) {
       var item = results[i];
-      console.log('Item #: ' + item);
       if (item.length === 3 || item.length === 4) {
-         console.log('Using item ' + item);
-         wikidot.getPage('scp-' + item, function(error,value) {
-           console.log(error);
-           if (error.length < 5) { 
-             reply += '**[SCP-' + item + '](https:/' + wikidot.site + '/' + 'scp-' + item + ')**';
-             reply += '&nbsp;';
-             reply += ' Written by ' + value.created_by + ' on ' + value.created_at + '&nbsp;';
-             reply += 'Rating: ' + value.rating + '&nbsp;';
+         var url = 'https://scp-wiki.net/scp-' + item;
+         
+         var request = {
+           hostname: 'scp-wiki.wikidot.com',
+           path: '/scp-' + item,
+           method: 'GET',
+           agent: false
+         };
+         https.request(request,function(res) {
+           console.log('URL: ' + url + ', Error Code: ' + res.statusCode);
+           if (res.statusCode === 200) {
+             reply += '**[SCP-' + item + '](' + url + ')**\n&nbsp;';
            }
+           res.on('data', function() { });
+           count += 1;
+         }).on('error',function(e) {
+           console.log(e);
          });
       }
     }
    
+    while (count != results.length) { }
     if (reply === '') reply = 'No Reply';
     return reply;
   }

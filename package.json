@@ -18,6 +18,7 @@
   "homepage": "https://github.com/johnnunley/marvinv2#readme",
   "dependencies": {
     "dotenv": "^4.0.0",
+    "https": "^1.0.0",
     "snoostorm": "0.0.5",
     "snoowrap": "^1.15.1",
     "wikidot": "^1.0.0",
