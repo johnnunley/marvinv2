@@ -1,8 +1,21 @@
 var respond = require('./respond');
 
-console.log(respond.respond('Oh boy, I really like SCP-2747'));
-console.log(respond.respond('I like cheddar'));
-console.log(respond.respond('SCP-3400'));
-console.log(respond.respond('SCP-7680'));
-console.log(respond.respond('I have 10 friends'));
-console.log(respond.respond('SCP-2998 and SCP-2552'));
+var callback = function(shouldLog,log) {
+  if (shouldLog) {
+    console.log(log);
+  }
+  else {
+    console.log('No Reply');
+  }
+};
+
+var test = function(text) {
+  respond.respond(text,callback);
+};
+
+test('Marv, fetch me SCP-2747');
+test('SCP-7897');
+test('I am 10 years old');
+test('2000 and 2998');
+
+

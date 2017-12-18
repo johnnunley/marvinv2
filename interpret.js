@@ -17,18 +17,18 @@ along with MarvinV2.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-var interpret = require('./interpret');
-var database = require('./database');
-var forEachAsync = require('forEachAsync').forEachAsync;
+module.exports = {
+  getNumbers : function(comment) {
+    //var reply = co(function *() {
+      var text = comment;
+      var r = /\d+/g;
+      var s = text;
+      var m;
+      var results = [];
+      while ((m = r.exec(s)) != null) {
+        results.push(m[0]);
+      }
 
-exports.respond = function(text,callback) {
-  var results = interpret.getNumbers(text);
-  var text = '';
-  forEachAsync(results,(item) => {
-    database.exists(item,() => {
-      text += '**[SCP-' + item + '](' + database.url_base + item + ')**\n&nbsp;';
-    });
-  }).then(function() {
-    callback((text !== ''),text);
-  });
+      return results; 
+  }
 };
